@@ -106,11 +106,6 @@
         "command": "export"
       },
       {
-        "label": "menu.print",
-        "accelerator": "Cmd+P",
-        "command": "print"
-      },
-      {
         "type": "separator"
       },
       {

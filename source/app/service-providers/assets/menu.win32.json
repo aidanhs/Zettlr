@@ -48,11 +48,6 @@
         "command": "export"
       },
       {
-        "label": "menu.print",
-        "accelerator": "Ctrl+P",
-        "command": "print"
-      },
-      {
         "label": "menu.preferences",
         "submenu": [
           {

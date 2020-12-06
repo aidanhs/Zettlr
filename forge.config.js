@@ -41,11 +41,6 @@ module.exports = {
               'name': 'main_window'
             },
             {
-              'html': './source/print/index.htm',
-              'js': './source/print/zettlr-print-window.ts',
-              'name': 'print'
-            },
-            {
               'html': './source/log-viewer/index.htm',
               'js': './source/log-viewer/index.js',
               'name': 'log_viewer'

@@ -666,15 +666,6 @@ export default class Zettlr {
     return this._windowManager.getMainWindow()
   }
 
-  /**
-   * Displays the given target file in the print window
-   *
-   * @param   {string}  target  The target file path
-   */
-  showPrintWindow (target: string): void {
-    this._windowManager.showPrintWindow(target)
-  }
-
   // Convenience wrappers: Modules that have access to the application object
   // are able to prompt, ask for stuff, etc.
   async askOverwriteFile (filename: string): Promise<boolean> {

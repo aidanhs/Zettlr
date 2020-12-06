@@ -30,7 +30,6 @@ import path from 'path'
 import { trans } from '../../../common/i18n'
 import { DirDescriptor, MDFileDescriptor } from '../fsal/types'
 import createMainWindow from './create-main-window'
-import createPrintWindow from './create-print-window'
 import shouldOverwriteFileDialog from './dialog/should-overwrite-file'
 import shouldReplaceFileDialog from './dialog/should-replace-file'
 import askDirectoryDialog from './dialog/ask-directory'
@@ -41,8 +40,6 @@ import askFileDialog from './dialog/ask-file'
 
 export default class WindowManager {
   private _mainWindow: BrowserWindow|null
-  private _printWindow: BrowserWindow|null
-  private _printWindowFile: string|undefined
   private _windowState: WindowPosition[]
   private readonly _configFile: string
   private _fileLock: boolean
@@ -50,8 +47,6 @@ export default class WindowManager {
 
   constructor () {
     this._mainWindow = null
-    this._printWindow = null
-    this._printWindowFile = undefined
     this._windowState = []
     this._configFile = path.join(app.getPath('userData'), 'window_state.json')
     this._fileLock = false
@@ -155,16 +150,11 @@ export default class WindowManager {
         // shutdown by closing all other windows.
         if (win === this._mainWindow) continue
 
-        // Now find the window to close. Emit a warning if the window is not
+        // Emit a warning if the window is not
         // handled by the Window manager, as this indicates a bug and helps us
         // centralise everything here.
-        if (this._printWindow === win) {
-          win.close()
-          this._printWindow = null
-        } else {
-          global.log.warning(`[Window Manager] The window "${win.getTitle()}" (ID: ${win.id}) is not managed by the window manager.`)
-          win.close()
-        }
+        global.log.warning(`[Window Manager] The window "${win.getTitle()}" (ID: ${win.id}) is not managed by the window manager.`)
+        win.close()
       }
 
       // TODO: Check if we can really close the window. Abort using
@@ -314,37 +304,6 @@ export default class WindowManager {
       this._hookWindowResize(this._mainWindow, saneConfiguration)
     } else {
       this._makeVisible(this._mainWindow)
-    }
-  }
-
-  showLogWindow (): void {
-    // Shows the log window TODO
-  }
-
-  /**
-   * Opens the print window with the given file
-   *
-   * @param   {string}  filePath  The file to load
-   */
-  showPrintWindow (filePath: string): void {
-    // Shows the print window
-    if (this._printWindow === null) {
-      this._printWindow = createPrintWindow(filePath)
-      this._printWindowFile = filePath
-
-      // Dereference the window as soon as it is closed
-      this._printWindow.on('closed', () => {
-        this._printWindow = null
-        this._printWindowFile = undefined
-      })
-    } else if (this._printWindowFile === filePath) {
-      this._makeVisible(this._printWindow)
-    } else {
-      // There is a print window, but a different file was requested.
-      // In this case, close the current print window and call this function
-      // again so that the first if is executed
-      this._printWindow.close()
-      this.showPrintWindow(filePath)
     }
   }
 
