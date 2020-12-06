@@ -9,7 +9,6 @@
         <li><a href="#prefs-tabs-zkn">{{i18n "dialog.preferences.zkn.title"}}</a></li>
         <li><a href="#prefs-tabs-display">{{i18n "dialog.preferences.display.title"}}</a></li>
         <li><a href="#prefs-tabs-theme">{{i18n "dialog.preferences.theme.title"}}</a></li>
-        <li><a href="#prefs-tabs-spellchecking">{{i18n "dialog.preferences.spellchecking.title"}}</a></li>
         <li><a href="#prefs-tabs-autocorrect">{{ i18n "dialog.preferences.autocorrect.title" }}</a></li>
         <li><a href="#prefs-tabs-advanced">{{i18n "dialog.preferences.advanced"}}</a></li>
       </ul>
@@ -23,10 +22,7 @@
           </label>
           <select name="appLang" id="app-lang">
             {{#each languages}}
-            <option value="{{this.bcp47}}" data-download="{{this.todownload}}" {{#ifCond this.bcp47 '=' ../appLang}}selected="selected"{{/ifCond}}>
-              {{#if this.toDownload}}
-              {{i18n "dialog.preferences.translations.download"}}
-              {{/if}}
+            <option value="{{this.bcp47}}" {{#ifCond this.bcp47 '=' ../appLang}}selected="selected"{{/ifCond}}>
               {{i18n "dialog.preferences.app_lang." this.bcp47}}
               {{#ifCond this.completion '<' 100}}
               ({{this.completion}}%)
@@ -34,9 +30,6 @@
             </option>
             {{/each}}
           </select>
-          <p id="app-lang-download-indicator">
-            <!--<a href="#" onclick="require('electron').shell.openExternal('https://translate.zettlr.com/')">Get more languages &hellip;</a>-->
-          </p>
           <hr>
           <div class="cb-group">
             <label class="cb-toggle">
@@ -706,40 +699,6 @@
       </div>
 
 
-
-
-      {{!-- Spellchecking options --}}
-      <div id="prefs-tabs-spellchecking">
-        <div class="box-left">
-          <p>{{i18n "dialog.preferences.spellcheck"}}</p>
-          <p>{{i18n "dialog.preferences.spellcheck_warning"}}</p>
-          <input type="text" class="dicts-list-search" placeholder="{{i18n "dialog.preferences.spellcheck_search_placeholder"}}">
-          <ul class="dicts-list">
-            {{#each availableDicts}}
-            <li class="cb-group dicts-list-item">
-              <label class="cb-toggle">
-                <input type="checkbox" name="selectedDicts" value="{{this}}" id="{{this}}" {{#ifIn this ../selectedDicts}}checked="checked"{{/ifIn}}>
-                <div class="toggle"></div>
-              </label>
-              <label for="{{this}}">{{transDict this}}</label>
-            </li>
-            {{/each}}
-          </ul>
-        </div>
-        <div class="box-right">
-          <!-- Here come the custom user dictionary words! -->
-          <p>{{i18n "dialog.preferences.user_dictionary"}}</p>
-          <ul class="user-dict">
-            {{#each userDictionary}}
-            <li class="user-dict-item">
-              <input type="hidden" value="{{this}}" name="userDictionary">
-              <span>{{this}}</span>
-              <clr-icon shape="times"></clr-icon>
-            </li>
-            {{/each}}
-          </ul>
-        </div>
-      </div>
 
 
       {{!-- AutoCorrect Options --}}

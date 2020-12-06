@@ -192,53 +192,11 @@ module.exports = function displayContextMenu (event, isReadOnly, commandCallback
     })
   }
 
-  // If the word is spelled wrong, request suggestions
-  let typoPrefix = []
-  if (elem.classList.contains('cm-spell-error')) {
-    currentSuggestions = ipcRenderer.sendSync('dictionary-provider', {
-      command: 'suggest',
-      term: elem.textContent
-    })
-    if (currentSuggestions.length > 0) {
-      for (let i = 0; i < currentSuggestions.length; i++) {
-        typoPrefix.push({
-          id: `acceptSuggestion-${i}`,
-          type: 'normal',
-          enabled: true,
-          label: currentSuggestions[i]
-        })
-      }
-    } else {
-      typoPrefix.push({
-        label: trans('menu.no_suggestions'),
-        enabled: false
-      })
-    }
-
-    typoPrefix.push({ type: 'separator' })
-    // Always add an option to add a word to the user dictionary
-    typoPrefix.push({
-      id: `typo-add-${elem.textContent}`,
-      label: trans('menu.add_to_dictionary'),
-      enabled: true
-    })
-    // Final separator
-    typoPrefix.push({ type: 'separator' })
-
-    buildMenu = typoPrefix.concat(buildMenu)
-  }
-
   currentMenu = buildMenu
 
   // Now we can display the menu
   const point = { x: event.clientX, y: event.clientY }
   const closeCallback = global.menuProvider.show(point, buildMenu, (clickedID) => {
-    if (clickedID.startsWith('acceptSuggestion-')) {
-      const idx = parseInt(clickedID.substr(17), 10) // Retrieve the ID
-      replaceCallback(currentSuggestions[idx])
-      return
-    }
-
     // If the ID resembles citekey-xxxx, open the corresponding attachment
     if (clickedID.startsWith('citekey-')) {
       ipcRenderer.send('message', {
@@ -247,14 +205,6 @@ module.exports = function displayContextMenu (event, isReadOnly, commandCallback
       })
       closeCallback()
       return
-    }
-
-    // If the ID resembles typo-add-xxxx, add the given word to the dictionary
-    if (clickedID.startsWith('typo-add-')) {
-      ipcRenderer.sendSync('dictionary-provider', {
-        command: 'add',
-        term: clickedID.substr(9) // Extract the word from the ID
-      })
     }
 
     let found = currentMenu.find((elem) => {

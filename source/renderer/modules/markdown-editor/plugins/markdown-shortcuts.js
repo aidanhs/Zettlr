@@ -59,7 +59,7 @@ const { clipboard } = require('electron');
       // TODO: Check token type state at the cursor position to leave the
       // mode if already in the mode.
       let currentToken = cm.getTokenAt(cm.getCursor()).type
-      if (currentToken != null && (currentToken.indexOf(tokentype) > -1)) { // -- the tokentypes can be multiple (spell-error, e.g.)
+      if (currentToken != null && (currentToken.indexOf(tokentype) > -1)) { // -- the tokentypes can be multiple
         // We are, indeed, currently in this token. So let's check *how*
         // we are going to leave the state.
         let to = { 'line': cm.getCursor().line, 'ch': cm.getCursor().ch + post.length }

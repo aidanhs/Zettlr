@@ -10,7 +10,6 @@ The following utility functions still need some tests.
 // const ignoreDir = require('../source/common/util/ignore-dir')
 // const ignoreFile = require('../source/common/util/ignore-file')
 // const isAttachment = require('../source/common/util/is-attachment')
-// const isDictAvailable = require('../source/common/util/is-dict-available')
 // const isDir = require('../source/common/util/is-dir')
 // const isFile = require('../source/common/util/is-file')
 // const makeImgPathsAbsolute = require('../source/common/util/make-img-paths-absolute')

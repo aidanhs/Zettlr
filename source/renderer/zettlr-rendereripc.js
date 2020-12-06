@@ -195,13 +195,6 @@ class ZettlrRendererIPC {
         this.send(cmd, cnt)
         break
 
-      // This message is sent by the main process and directs the renderer to
-      // flush the complete dictionary buffer so that message are being fetched
-      // from main again.
-      case 'invalidate-dict':
-        this._invalidateDictionaryBuffer()
-        break
-
       case 'app-quit':
         // In this case we simply "re-send" that command. This will internally
         // trigger a closing-command buffer, which saves the file before actually
@@ -552,11 +545,6 @@ class ZettlrRendererIPC {
       // Insert arbitrary text into the CodeMirror instance
       case 'insert-text':
         this._app.getEditor().insertText(cnt)
-        break
-
-      // Import a language file
-      case 'import-lang-file':
-        this.send('import-lang-file')
         break
 
       // Import files and folders

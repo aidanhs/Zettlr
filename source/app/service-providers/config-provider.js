@@ -27,7 +27,6 @@ const ignoreFile = require('../../common/util/ignore-file')
 const safeAssign = require('../../common/util/safe-assign')
 const isDir = require('../../common/util/is-dir')
 const isFile = require('../../common/util/is-file')
-const isDictAvailable = require('../../common/util/is-dict-available')
 const { getLanguageFile } = require('../../common/i18n')
 const COMMON_DATA = require('../../common/data.json')
 const ZETTLR_VERSION = app.getVersion()
@@ -245,7 +244,6 @@ module.exports = class ConfigProvider extends EventEmitter {
         'useFirstHeadings': false // Should first headings be displayed instead of filenames?
       },
       // Language
-      'selectedDicts': [ ], // By default no spell checking is active to speed up first start.
       'appLang': this.getLocale(),
       'debug': false,
       'watchdog': {
@@ -453,15 +451,6 @@ module.exports = class ConfigProvider extends EventEmitter {
 
     // Now sort the paths.
     this._sortPaths()
-
-    // We have to run over the spellchecking dictionaries and see whether or
-    // not they are still valid or if they have been deleted.
-    for (let i = 0; i < this.config['selectedDicts'].length; i++) {
-      if (!isDictAvailable(this.config['selectedDicts'][i])) {
-        this.config['selectedDicts'].splice(i, 1)
-        --i
-      }
-    }
   }
 
   /**

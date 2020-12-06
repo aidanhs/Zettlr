@@ -44,7 +44,6 @@ const CUSTOM_PATHS = {
  */
 const REQUIRED_DIRECTORIES = [
   app.getPath('userData'), // Main config directory
-  path.join(app.getPath('userData'), 'dict'), // Custom dictionary path
   path.join(app.getPath('userData'), 'lang'), // Custom translation path
   path.join(app.getPath('userData'), 'logs') // Log path
 ]

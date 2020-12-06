@@ -310,19 +310,6 @@ export default class MenuProvider {
             global.log.showLogViewer()
           }
           break
-        case 'openDictData':
-          menu.click = function (menuitem, focusedWindow) {
-            shell.openPath(path.join(app.getPath('userData'), '/dict'))
-              .then(potentialError => {
-                if (potentialError !== '') {
-                  global.log.error('Could not open dictionary directory:' + potentialError)
-                }
-              })
-              .catch(err => {
-                global.log.error(`[Menu Provider] Could not open the dictionary directory: ${err.message as string}`, err)
-              })
-          }
-          break
         // Enumerate the recent docs
         case 'recent-docs':
           menu.submenu = [{

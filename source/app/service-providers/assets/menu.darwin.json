@@ -109,17 +109,6 @@
         "type": "separator"
       },
       {
-        "label": "menu.import_lang_file",
-        "command": "import-lang-file"
-      },
-      {
-        "label": "menu.import_dict_file",
-        "zettlrRole": "openDictData"
-      },
-      {
-        "type": "separator"
-      },
-      {
         "label": "menu.rename_file",
         "accelerator": "Cmd+R",
         "command": "file-rename"

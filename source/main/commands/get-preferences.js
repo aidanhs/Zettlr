@@ -13,7 +13,7 @@
  */
 
 const ZettlrCommand = require('./zettlr-command')
-const { enumDictFiles, enumLangFiles } = require('../../common/i18n')
+const { enumLangFiles } = require('../../common/i18n')
 
 class GetPreferences extends ZettlrCommand {
   constructor (app) {
@@ -28,11 +28,8 @@ class GetPreferences extends ZettlrCommand {
   run (evt, arg) {
     // get() with no arguments returns the whole config
     let toSend = global.config.get()
-    // Add available translations and dictionaries
+    // Add available translations
     toSend.supportedLangs = enumLangFiles().map(elem => elem.tag)
-    toSend.availableDicts = enumDictFiles().map(elem => elem.tag)
-    toSend.userDictionary = global.dict.getUserDictionary()
-    toSend.availableLanguages = global.translations.getAvailableLanguages()
     global.ipc.send('preferences', toSend)
   }
 }

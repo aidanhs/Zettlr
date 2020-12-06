@@ -33,9 +33,9 @@
       var eolState = cm.getStateAfter(pos.line)
       var inner = cm.getMode().innerMode(eolState)
       // innerMode gets the first inner mode, i.e.:
-      // multiplex -> spellchecker (not visible the
+      // multiplex -> markdown-zkn (not visible the
       // underyling md mode)
-      if (inner.mode.name !== 'spellchecker') {
+      if (inner.mode.name !== 'markdown-zkn') {
         cm.execCommand('newlineAndIndent')
         return
       } else {

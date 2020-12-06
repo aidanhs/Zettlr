@@ -14,7 +14,6 @@ require('codemirror/mode/stex/stex')
 require('./modes/markdown-zkn.js')
 require('./modes/readability.js')
 require('./modes/multiplex.js')
-require('./modes/spellchecker.js')
 
 // 2. Editing addons
 require('codemirror/addon/edit/closebrackets')

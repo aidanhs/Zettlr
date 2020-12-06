@@ -19,7 +19,6 @@ import * as ForceOpen from './force-open'
 import * as GetPreferences from './get-preferences'
 import * as GetSponsors from './get-sponsors'
 import * as ImportFiles from './import'
-import * as ImportLangFile from './import-lang-file'
 import * as IncreasePomodoro from './increase-pomodoro'
 import * as OpenAttachment from './open-attachment'
 import * as OpenExternally from './open-externally'
@@ -28,7 +27,6 @@ import * as RootClose from './root-close'
 import * as SaveImageFromClipboard from './save-image-from-clipboard'
 import * as SortOpenFiles from './sort-open-files'
 import * as UpdateProjectProperties from './update-project-properties'
-import * as UpdateUserDictionary from './update-user-dictionary'
 import * as DirRescan from './dir-rescan'
 
 export const commands = [
@@ -54,7 +52,6 @@ export const commands = [
   GetPreferences,
   GetSponsors,
   ImportFiles,
-  ImportLangFile,
   IncreasePomodoro,
   OpenAttachment,
   OpenExternally,
@@ -62,6 +59,5 @@ export const commands = [
   RootClose,
   SaveImageFromClipboard,
   SortOpenFiles,
-  UpdateProjectProperties,
-  UpdateUserDictionary
+  UpdateProjectProperties
 ]

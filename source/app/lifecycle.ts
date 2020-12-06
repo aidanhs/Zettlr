@@ -30,7 +30,6 @@ import AppearanceProvider from './service-providers/appearance-provider'
 import CiteprocProvider from './service-providers/citeproc-provider'
 import ConfigProvider from './service-providers/config-provider'
 import CssProvider from './service-providers/css-provider'
-import DictionaryProvider from './service-providers/dictionary-provider'
 import LogProvider from './service-providers/log-provider'
 import RecentDocsProvider from './service-providers/recent-docs-provider'
 import MenuProvider from './service-providers/menu-provider'
@@ -46,7 +45,6 @@ var appearanceProvider: AppearanceProvider
 var citeprocProvider: CiteprocProvider
 var configProvider: ConfigProvider
 var cssProvider: CssProvider
-var dictionaryProvider: DictionaryProvider
 var logProvider: LogProvider
 var recentDocsProvider: RecentDocsProvider
 var tagProvider: TagProvider
@@ -93,7 +91,6 @@ export async function bootApplication (): Promise<void> {
   configProvider = new ConfigProvider()
   appearanceProvider = new AppearanceProvider()
   citeprocProvider = new CiteprocProvider()
-  dictionaryProvider = new DictionaryProvider()
   recentDocsProvider = new RecentDocsProvider()
   menuProvider = new MenuProvider()
   tagProvider = new TagProvider()
@@ -130,7 +127,6 @@ export async function shutdownApplication (): Promise<void> {
     await tagProvider.shutdown()
     await menuProvider.shutdown()
     await recentDocsProvider.shutdown()
-    await dictionaryProvider.shutdown()
     await citeprocProvider.shutdown()
     await appearanceProvider.shutdown()
     await configProvider.shutdown()

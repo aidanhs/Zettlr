@@ -1,5 +1,5 @@
 /* global CodeMirror define */
-// ZETTLR SPELLCHECKER PLUGIN
+// ZETTLR MULTIPLEX PLUGIN
 
 const highlightingModes = {
   'text/javascript': {
@@ -205,7 +205,7 @@ const highlightingModes = {
 
   /**
   * MULTIPLEX MODE: This will by default load our internal mode cascade
-  * (consisting of the zkn-mode, the spellchecker and finally the gfm
+  * (consisting of the zkn-mode and finally the gfm
   * mode) OR in code blocks use the respective highlighting modes.
   * @param  {Object} config The previous configuration object
   * @return {CodeMirrorMode}        The multiplex mode
@@ -226,7 +226,7 @@ const highlightingModes = {
     }
 
     return CodeMirror.multiplexingMode(
-      CodeMirror.getMode(config, 'spellchecker'), // Default mode
+      CodeMirror.getMode(config, 'markdown-zkn'), // Default mode
       ...codeModes,
       {
         open: /`{3}|~{3}/,

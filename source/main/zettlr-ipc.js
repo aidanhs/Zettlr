@@ -267,11 +267,6 @@ class ZettlrIPC {
         this.send('citeproc-ids', (global.citeproc) ? global.citeproc.getIDs() : [])
         break
 
-      // Request a language to download from the API
-      case 'request-language':
-        global.translations.requestLanguage(cnt)
-        break
-
       case 'switch-theme-berlin':
       case 'switch-theme-bielefeld':
       case 'switch-theme-frankfurt':

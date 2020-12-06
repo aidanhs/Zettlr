@@ -26,7 +26,6 @@ class PreferencesDialog extends ZettlrDialog {
   constructor () {
     super()
     this._dialog = 'preferences'
-    this._boundCallback = this.afterDownload.bind(this)
     this._textTimeout = null
   }
 
@@ -56,20 +55,9 @@ class PreferencesDialog extends ZettlrDialog {
         data.languages.push({
           'bcp47': l,
           'completion': 100,
-          'toDownload': false
         })
       }
     }
-
-    for (let lang of data.availableLanguages) {
-      // If the language is already in the supportedLangs, we can jump over them
-      if (!data.languages.find(elem => elem.bcp47 === lang.bcp47)) {
-        let x = lang
-        x.toDownload = true
-        data.languages.push(x)
-      }
-    }
-    this._languages = data.languages // Save a reference for downloading etc.
 
     // Now prepopulate some stuff for autoCorrect
     data.autoCorrectReplacements = []
@@ -103,10 +91,6 @@ class PreferencesDialog extends ZettlrDialog {
     return this.appLangElement.querySelector(`option[value="${language}"]`)
   }
 
-  get downloadIndicatorElement () {
-    return document.getElementById('app-lang-download-indicator')
-  }
-
   postAct () {
     // Activate the form to be submitted
     let form = this._modal.querySelector('form#dialog')
@@ -114,66 +98,6 @@ class PreferencesDialog extends ZettlrDialog {
       e.preventDefault()
       // Give the ZettlrBody object the results
       this.proceed(serializeFormData(form))
-    })
-
-    // Download not-available languages on select
-    this.appLangElement.addEventListener('change', (event) => {
-      let l = this._languages.find(elem => elem.bcp47 === this.appLang)
-      if (l.toDownload) {
-        let langLocalisation = trans('dialog.preferences.translations.downloading', trans(`dialog.preferences.app_lang.${l.bcp47}`))
-        // How does downloding work? Easy:
-        // 1. Block the element itself
-        // 2. Notify the user that a language will be downloaded
-        // 3. Tell the main process to download the language
-        // 4. Wait for the one IPC event announcing the download (or error)
-        // 5. Notify the user of the successful download
-        // 6. Unblock the element
-        this.appLangElement.disabled = true
-        // Indicate downloading both on the element itself ...
-        const language = this.getLanguageOptionElement(l.bcp47)
-        language.textContent = langLocalisation
-        // Override the option's value to ensure even if the user saves during
-        // download no non-available language is set.
-        language.value = global.config.get('appLang')
-        // ... and beneath the select
-        this.downloadIndicatorElement.textContent = langLocalisation
-        this.downloadIndicatorElement.append(this.spinner)
-        // Notify main
-        global.ipc.send('request-language', l.bcp47)
-        ipcRenderer.on('message', this._boundCallback) // Listen for the back event
-      }
-    })
-
-    const dictionariesSearchField = document.querySelector('.dicts-list-search')
-    // Functions for the search field of the dictionary list.
-    dictionariesSearchField.addEventListener('keyup', (e) => {
-      const searchFor = dictionariesSearchField.value.toLowerCase()
-      document.querySelectorAll('.dicts-list li').forEach((element) => {
-        element.innerText.toLowerCase().includes(searchFor)
-          ? $(element).show()
-          : $(element).hide()
-      })
-    })
-
-    $('.dicts-list').on('click', (e) => {
-      // If the user simply clicks anywhere on the li (and not on the label),
-      // switch the checkbox state via javascript
-      let elem = $(e.target)
-      if (elem.is('li') && elem.hasClass('dicts-list-item')) {
-        let cb = elem.find('input[type="checkbox"]').first()
-        cb.prop('checked', !cb.prop('checked'))
-      }
-    })
-    // END searchfield functions.
-
-    // Remove the list items on click
-    $('.user-dict-item').on('click', (e) => {
-      let elem = $(e.target)
-      elem.animate({
-        'height': '0px'
-      }, 500, function () {
-        $(this).detach()
-      })
     })
 
     // Begin: functions for the zkn regular expression fields
@@ -253,33 +177,6 @@ class PreferencesDialog extends ZettlrDialog {
     })
   }
 
-  afterDownload (event, arg) {
-    if (!arg.hasOwnProperty('command') || arg.command !== 'language-download') return
-    // Detach this event listener
-    ipcRenderer.off('message', this._boundCallback)
-    let cnt = arg.content
-    let langLocalisation = trans(`dialog.preferences.app_lang.${cnt.bcp47}`)
-
-    // Tell success or failure and unlock the select
-    if (cnt.success) {
-      this.downloadIndicatorElement.textContent = trans('dialog.preferences.translations.success', langLocalisation)
-      this.getLanguageOptionElement(global.config.get('appLang')).textContent = langLocalisation
-      // Again override the value to the correct one.
-      this.getLanguageOptionElement(global.config.get('appLang')).value = cnt.bcp47
-    } else {
-      // Do not override the language value to make sure the language stays
-      // even if the user doesn't select another language.
-      this.downloadIndicatorElement.textContent = trans('dialog.preferences.translations.error', langLocalisation)
-      this.getLanguageOptionElement(cnt.bcp47).textContent = trans('dialog.preferences.translations.not_available', langLocalisation)
-    }
-    this.appLangElement.disabled = false // Unblock
-    if (this._textTimeout) clearTimeout(this._textTimeout)
-    this._textTimeout = setTimeout(() => {
-      // Hide the text after three seconds
-      this.downloadIndicatorElement.textContent = ''
-    }, 3000)
-  }
-
   proceed (data) {
     // First remove potential error-classes
     for (const element of this.getModal().querySelectorAll('input')) {
@@ -321,9 +218,6 @@ class PreferencesDialog extends ZettlrDialog {
     cfg['zkn.autoCreateLinkedFiles'] = (data.find(elem => elem.name === 'zkn.autoCreateLinkedFiles') !== undefined)
 
     cfg['watchdog.activatePolling'] = (data.find(elem => elem.name === 'watchdog.activatePolling') !== undefined)
-
-    // Extract selected dictionaries
-    cfg['selectedDicts'] = data.filter(elem => elem.name === 'selectedDicts').map(elem => elem.value)
 
     // Now for the AutoCorrect preferences - first the replacement table
     let keys = data.filter((e) => e.name === 'autoCorrectKeys[]')
@@ -389,11 +283,6 @@ class PreferencesDialog extends ZettlrDialog {
       }
       return // Don't try to update falsy settings.
     }
-
-    // We're done. But before sending retrieve all remaining user dictionary words ...
-    let userDictionary = data.filter(elem => elem.name === 'userDictionary' && elem.value.length > 0).map(elem => elem.value)
-    // ... and send them to main separately
-    global.ipc.send('update-user-dictionary', userDictionary)
 
     // Finally send and close this dialog.
     global.ipc.send('update-config', cfg)
