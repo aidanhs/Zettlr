@@ -276,10 +276,7 @@ module.exports = {
       // the file manager and don't do a thing.
       if (this.obj.dirNotFoundFlag === true) return evt.stopPropagation()
 
-      if (this.obj.type === 'file' && event.altKey) {
-        // QuickLook the file
-        global.ipc.send('open-quicklook', this.obj.hash)
-      } else if (this.obj.type === 'file') {
+      if (this.obj.type === 'file') {
         // Request the clicked file
         if (!middleClick && !ctrl && !cmd) {
           global.editor.announceTransientFile(this.obj.hash)

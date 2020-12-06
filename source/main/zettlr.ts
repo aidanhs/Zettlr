@@ -447,21 +447,6 @@ export default class Zettlr {
     }
   }
 
-  /**
-   * Opens a standalone quicklook window when the renderer requests it
-   * @param  {number} hash The hash of the file to be displayed in the window
-   * @return {void}      No return.
-   */
-  openQL (hash: number): void {
-    let file: MDFileDescriptor|null = this._fsal.findFile(hash)
-    if (file === null) {
-      global.log.error(`[Application] A Quicklook window for ${hash} was requested, but the file was not found.`)
-      return
-    }
-
-    this._windowManager.showQuicklookWindow(file)
-  }
-
   // /**
   //  * In case a root directory gets removed, indicate that fact by marking it
   //  * dead.

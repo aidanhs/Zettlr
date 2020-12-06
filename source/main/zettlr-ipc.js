@@ -64,17 +64,6 @@ class ZettlrIPC {
         return // Also, don't dispatch further
       }
 
-      // Last possibility: A quicklook window has requested a file. In this case
-      // we mustn't obliterate the "event" because this way we don't need to
-      // search for the window.
-      if (arg.command === 'ql-get-file') {
-        let QLFile = this._app.findFile(arg.content)
-        global.application.getFile(QLFile).then(file => {
-          event.sender.send('file', file)
-        })
-        return
-      }
-
       // In all other occasions omit the event.
       this.dispatch(arg)
     })
@@ -146,7 +135,7 @@ class ZettlrIPC {
         require('electron').app.quit()
         break
 
-      // Window controls for the Quicklook windows must use IPC calls
+      // Window controls for some windows must use IPC calls
       case 'win-maximise':
         if (BrowserWindow.getFocusedWindow()) {
           // Implements maximise-toggling for windows
@@ -278,10 +267,6 @@ class ZettlrIPC {
         this.send('citeproc-ids', (global.citeproc) ? global.citeproc.getIDs() : [])
         break
 
-      case 'open-quicklook':
-        this._app.openQL(cnt)
-        return true
-
       // Request a language to download from the API
       case 'request-language':
         global.translations.requestLanguage(cnt)
@@ -312,11 +297,6 @@ class ZettlrIPC {
     // We received a new event and need to handle it.
 
     switch (cmd) {
-      // A quicklook window wants to pop-out of the main window
-      case 'open-quicklook':
-        this._app.openQL(arg)
-        return true
-
       // Return the metadata for the translation files
       case 'get-translation-metadata':
         return getTranslationMetadata()

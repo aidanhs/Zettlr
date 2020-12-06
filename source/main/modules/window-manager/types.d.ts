@@ -3,11 +3,8 @@
  * if applicable.
  */
 export interface WindowPosition {
-  // Currently, only main and quicklook windows retain their state
-  windowType: 'main'|'quicklook'
-  // Optionally holds the path to the previewed file in order to associate
-  // the window's bounds with the given file
-  quicklookFile?: string
+  // Currently, only main windows retain their state
+  windowType: 'main'
   // Holds the last unique display ID from the given structure
   lastDisplayId: number
   // The window bounds

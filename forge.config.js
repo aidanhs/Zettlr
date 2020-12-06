@@ -50,11 +50,6 @@ module.exports = {
               'js': './source/log-viewer/index.js',
               'name': 'log_viewer'
             },
-            {
-              'html': './source/quicklook/index.htm',
-              'js': './source/quicklook/zettlr-quicklook-window.ts',
-              'name': 'quicklook'
-            }
           ]
         }
       }

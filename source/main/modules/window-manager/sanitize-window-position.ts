@@ -60,9 +60,8 @@ export default function _getSaneWindowPosition (conf: WindowPosition): WindowPos
 
   // Third, return a safe window position
   return {
-    // Use the provided windowType and (if applicable) quicklookFile
+    // Use the provided windowType
     windowType: conf.windowType,
-    quicklookFile: conf.quicklookFile,
     // Use the sane values for the rest
     lastDisplayId: saneDisplay.id,
     top: saneTop,

@@ -31,7 +31,6 @@ import { trans } from '../../../common/i18n'
 import { DirDescriptor, MDFileDescriptor } from '../fsal/types'
 import createMainWindow from './create-main-window'
 import createPrintWindow from './create-print-window'
-import createQuicklookWindow from './create-ql-window'
 import shouldOverwriteFileDialog from './dialog/should-overwrite-file'
 import shouldReplaceFileDialog from './dialog/should-replace-file'
 import askDirectoryDialog from './dialog/ask-directory'
@@ -40,14 +39,8 @@ import sanitizeWindowPosition from './sanitize-window-position'
 import { WindowPosition } from './types.d'
 import askFileDialog from './dialog/ask-file'
 
-interface QuicklookRecord {
-  path: string
-  win: BrowserWindow
-}
-
 export default class WindowManager {
   private _mainWindow: BrowserWindow|null
-  private readonly _qlWindows: QuicklookRecord[]
   private _printWindow: BrowserWindow|null
   private _printWindowFile: string|undefined
   private _windowState: WindowPosition[]
@@ -57,7 +50,6 @@ export default class WindowManager {
 
   constructor () {
     this._mainWindow = null
-    this._qlWindows = []
     this._printWindow = null
     this._printWindowFile = undefined
     this._windowState = []
@@ -166,11 +158,7 @@ export default class WindowManager {
         // Now find the window to close. Emit a warning if the window is not
         // handled by the Window manager, as this indicates a bug and helps us
         // centralise everything here.
-        if (this._qlWindows.find(record => record.win === win) !== undefined) {
-          const idx = this._qlWindows.findIndex(record => record.win === win)
-          win.close()
-          this._qlWindows.splice(idx, 1)
-        } else if (this._printWindow === win) {
+        if (this._printWindow === win) {
           win.close()
           this._printWindow = null
         } else {
@@ -326,72 +314,6 @@ export default class WindowManager {
       this._hookWindowResize(this._mainWindow, saneConfiguration)
     } else {
       this._makeVisible(this._mainWindow)
-    }
-  }
-
-  /**
-   * Opens a new Quicklook window for the given file.
-   *
-   * @param   {MDFileDescriptor}  file  The file to display in the Quicklook
-   */
-  showQuicklookWindow (file: MDFileDescriptor): void {
-    // Opens a new Quicklook. It's called new because there can be multiple
-    // Quicklook windows.
-
-    // First, let's make sure the file is not yet open
-    const record = this._qlWindows.find(record => record.path === file.path)
-
-    if (record !== undefined) {
-      // The window is already open -> make it visible
-      this._makeVisible(record.win)
-    } else {
-      let windowConfiguration = this._windowState.find(state => {
-        return state.windowType === 'quicklook' &&
-        state.quicklookFile === file.path
-      })
-
-      if (windowConfiguration === undefined) {
-        // Pass a default configuration
-        const display = screen.getPrimaryDisplay()
-        const width = Math.min(display.workArea.width, display.workArea.width / 2)
-        const height = Math.min(display.workArea.height, display.workArea.height / 2)
-        const top = (display.workArea.height - height) / 2
-        const left = (display.workArea.width - width) / 2
-        windowConfiguration = {
-          windowType: 'quicklook',
-          quicklookFile: file.path,
-          top: display.workArea.y + top, // Some displays begin at a y > 0
-          left: display.workArea.x + left, // Same as with the y-value
-          width: width,
-          height: height,
-          isMaximised: false,
-          lastDisplayId: display.id
-        }
-
-        this._windowState.push(windowConfiguration)
-      }
-
-      const saneConfiguration = sanitizeWindowPosition(windowConfiguration)
-      // Exchange the sanitised configuration
-      this._windowState.splice(this._windowState.indexOf(windowConfiguration), 1, saneConfiguration)
-
-      // This particular file is not yet open -> open it
-      const window: BrowserWindow = createQuicklookWindow(file, saneConfiguration)
-      this._hookWindowResize(window, saneConfiguration)
-      const qlWindow: QuicklookRecord = {
-        path: file.path,
-        win: window
-      }
-
-      // As soon as the window is closed, remove it from our array.
-      window.on('closed', () => {
-        const record = this._qlWindows.find(record => record.win === window)
-        if (record !== undefined) {
-          this._qlWindows.splice(this._qlWindows.indexOf(record), 1)
-        }
-      })
-
-      this._qlWindows.push(qlWindow)
     }
   }
 

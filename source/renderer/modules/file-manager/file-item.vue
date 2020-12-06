@@ -230,10 +230,7 @@
           const ctrl = event.ctrlKey && process.platform !== 'darwin'
           const cmd = event.metaKey && process.platform === 'darwin'
 
-          if (this.obj.type === 'file' && event.altKey) {
-            // QuickLook the file
-            global.ipc.send('open-quicklook', this.obj.hash)
-          } else if (this.obj.type === 'file') {
+          if (this.obj.type === 'file') {
             // Request the clicked file
             if (!middleClick && !ctrl && !cmd) {
               global.editor.announceTransientFile(this.obj.hash)

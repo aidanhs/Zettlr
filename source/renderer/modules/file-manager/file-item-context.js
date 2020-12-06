@@ -33,11 +33,6 @@ const TEMPLATE = [
     type: 'normal'
   },
   {
-    label: 'menu.quicklook',
-    command: 'open-quicklook',
-    type: 'normal'
-  },
-  {
     type: 'separator'
   },
   {
@@ -112,12 +107,6 @@ module.exports = function displayFileContext (event, fileObject, el) {
         break
       case 'menu.copy_id':
         clipboard.writeText(fileObject.id)
-        break
-      case 'menu.quicklook':
-        ipcRenderer.send('message', {
-          command: 'open-quicklook',
-          content: fileObject.hash
-        })
         break
       case 'menu.show_file':
         shell.showItemInFolder(fileObject.path)

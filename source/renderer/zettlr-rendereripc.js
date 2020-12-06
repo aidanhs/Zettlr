@@ -227,11 +227,6 @@ class ZettlrRendererIPC {
         this.send('print', { 'hash': this._app.getActiveFile().hash })
         break
 
-      // The context menu triggers this action, so send it to the main process.
-      case 'open-quicklook':
-        this.send('open-quicklook', cnt)
-        break
-
       case 'paths-update':
         // Update the paths
         this._app.refresh(cnt)
