@@ -1,8 +1,20 @@
 # 1.8.2
 
+## Support for Pandoc 2.11
+
+The default Pandoc command now targets Pandoc 2.11 and above. **In order to use the new command, make sure to "reset" it once, or (if it contains customisations) replace `$citeproc$` with `--citeproc --bibliography $bibliography$ $cslstyle$`.** However, you can retain compatibility with older versions by replacing the new part `--citeproc` with `--filter pandoc-citeproc`. The new `$bibliography$` variable will be replaced with `/path/to/your/library.json`. Furthermore, the `$cslstyle$`-variable will be replaced with `--csl /path/to/your/style.json`, if applicable.
+
 ## GUI and Functionality
 
-(nothing here)
+- The file search popup now retains your last search again.
+- The global search now lets you select all text again.
+- Removed deprecated Pandoc command variable `$citeproc$` and added the two variables `$bibliography$` and `$cslstyle$`.
+- Began implementing better screen reader support for Zettlr. Now, a certain amount of elements has received correct labels according to the ARIA guidelines so that screenreader are now better in handling the app:
+    - The toolbar is now being recognised as such, the toolbar buttons themselves have correct labels
+    - The editor tabs are recognised as a tabbar and you can easily switch tabs now.
+    - The sidebar buttons are now being correctly identified as tabs.
+    - Added region landmark roles to a few of the components in order to facilitate quicker voice over navigation.
+    - The icons in the file manager now have `role="presentation"` set to not have the screen reader name all of those "unlabelled images" one by one.
 
 ## Under the Hood
 
